@@ -1,0 +1,217 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model User {
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  name           String?
+  email          String           @unique
+  phone          Int
+  password       String?
+  emailVerified  DateTime?
+  image          String?
+  role           UserRole?        @default(USER)
+  address        String?
+  dateOfBirth    DateTime?
+  accounts       Account[]
+  sessions       Session[]
+  Authenticator  Authenticator[]
+  activities     Activity[]
+  tasks          Task[]
+  signups        Signup[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  transactions   Transaction[]
+  
+  // Relations
+  userRoles      UserRoleRelation[]
+  userPermissions UserPermissionRelation[]
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Authenticator {
+  credentialID         String  @id @map("_id")
+  userId               String  @db.ObjectId
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, credentialID])
+}
+
+model Activity {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String
+  createdAt DateTime @default(now())
+}
+
+model Revenue {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  month     String
+  amount    Float
+  createdAt DateTime @default(now())
+}
+
+model Task {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  description String
+  completed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Signup {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Transaction {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String
+  amount         Float
+  date           DateTime @default(now())
+  status         TransactionStatus
+  type           TransactionType
+  paymentMethod  String?
+  relatedOrder   String?
+  userComments   String?
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+}
+
+// New models for roles and permissions with join tables
+model Role {
+  id          String                @id @default(auto()) @map("_id") @db.ObjectId
+  name        String                @unique
+  createdAt   DateTime              @default(now())
+  permissions RolePermissionRelation[]
+  users       UserRoleRelation[]
+}
+
+model Permission {
+  id          String                @id @default(auto()) @map("_id") @db.ObjectId
+  name        String                @unique
+  createdAt   DateTime              @default(now())
+  roles       RolePermissionRelation[]
+  users       UserPermissionRelation[]
+}
+
+// Join table for User and Role
+model UserRoleRelation {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String @db.ObjectId
+  roleId  String @db.ObjectId
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+}
+
+// Join table for User and Permission
+model UserPermissionRelation {
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String @db.ObjectId
+  permissionId String @db.ObjectId
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, permissionId])
+}
+
+// Join table for Role and Permission
+model RolePermissionRelation {
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  roleId       String @db.ObjectId
+  permissionId String @db.ObjectId
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+}
+
+
+model Product {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  price       Float
+  category    String
+  tags        String[]
+  stock       Int
+  images      String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
