@@ -42,7 +42,7 @@ const UsersPage = ({ users,error }:UsersPageProps) => {
   if (error) {
     return <div>{error}</div>;
   }
-  return <UserTable users={users} />;
+  return <UserTable/>;
   
 };
 

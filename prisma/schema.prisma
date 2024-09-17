@@ -16,34 +16,55 @@ model User {
   id             String           @id @default(auto()) @map("_id") @db.ObjectId
   name           String?
   email          String           @unique
-  phone          Int
+  phone          Int?          // Change to String for better flexibility
   password       String?
   emailVerified  DateTime?
   image          String?
   role           UserRole?        @default(USER)
   address        String?
   dateOfBirth    DateTime?
-  accounts       Account[]
-  sessions       Session[]
-  Authenticator  Authenticator[]
+  accounts       Account[]        // Relation to OAuth accounts
+  sessions       Session[]        // Relation to user sessions
   activities     Activity[]
   tasks          Task[]
   signups        Signup[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   transactions   Transaction[]
-  
-  // Relations
+
+  // Relations for roles and permissions
   userRoles      UserRoleRelation[]
   userPermissions UserPermissionRelation[]
+}
+
+model feedback {
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  name           String?
+  email          String           @unique
+  feedback       String?
+  phone          String           // Change to String
+  createdAt      DateTime         @default(now())
+}
+
+model Stock {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  symbol      String
+  prices      Json[]
+  createdAt   DateTime @default(now())
+}
+
+model Coin {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  rate        Float
+  updatedAt   DateTime @updatedAt
 }
 
 model Account {
   id                String  @id @default(auto()) @map("_id") @db.ObjectId
   userId            String  @db.ObjectId
-  type              String
-  provider          String
-  providerAccountId String
+  provider          String  // OAuth provider (e.g., "github")
+  providerAccountId String  // Provider-specific account ID
   refresh_token     String? @db.String
   access_token      String? @db.String
   expires_at        Int?
@@ -54,7 +75,7 @@ model Account {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -76,21 +97,6 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-}
-
-model Authenticator {
-  credentialID         String  @id @map("_id")
-  userId               String  @db.ObjectId
-  providerAccountId    String
-  credentialPublicKey  String
-  counter              Int
-  credentialDeviceType String
-  credentialBackedUp   Boolean
-  transports           String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, credentialID])
 }
 
 model Activity {
@@ -127,8 +133,8 @@ model Signup {
 
 model Transaction {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String   @db.ObjectId
   user           User     @relation(fields: [userId], references: [id])
-  userId         String
   amount         Float
   date           DateTime @default(now())
   status         TransactionStatus
@@ -149,7 +155,8 @@ enum TransactionType {
   DEBIT
 }
 
-// New models for roles and permissions with join tables
+// Models for roles and permissions
+
 model Role {
   id          String                @id @default(auto()) @map("_id") @db.ObjectId
   name        String                @unique
@@ -201,7 +208,6 @@ model RolePermissionRelation {
 
   @@unique([roleId, permissionId])
 }
-
 
 model Product {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId

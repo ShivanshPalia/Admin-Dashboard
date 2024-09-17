@@ -1,7 +1,9 @@
 @tailwind base;
   @tailwind components;
   @tailwind utilities;
-  
+  @import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
+
   @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
   @layer base {
     :root {
@@ -80,4 +82,22 @@
     background-color: #2c2c2c;
     color: white;
   }
- 
+  
+
+  @layer components {
+    .nft-card {
+      @apply bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105;
+    }
+  
+    .nft-image {
+      @apply w-full h-40 object-cover rounded-md;
+    }
+  
+    .nft-title {
+      @apply text-2xl font-bold text-gray-800 mb-2;
+    }
+  
+    .nft-price {
+      @apply text-lg font-bold text-green-500;
+    }
+  }

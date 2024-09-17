@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { SessionProvider } from "next-auth/react";
 import Layout from "./components/layout";
 import { SelectedLinkProvider } from "./selectedlinkprovider";
-import {auth} from "@/auth"
+import { auth } from "@/app/api/auth/[...nextauth]/route";
+import {SessionProvider} from "next-auth/react"
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -17,9 +17,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth()
+  const session = await auth();
   return (
-    <SessionProvider session={session}>
+   <SessionProvider session={session}>
     <html lang="en">
       <body className={inter.className}>
        <SelectedLinkProvider>
@@ -29,6 +29,8 @@ export default async function RootLayout({
        </SelectedLinkProvider>
         </body>
     </html>
-     </SessionProvider>
+    </SessionProvider>
   );
 }
+
+

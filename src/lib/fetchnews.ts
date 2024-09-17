@@ -9,8 +9,8 @@ interface NewsArticle {
     };
   }
   export async function fetchNews(category: string): Promise<NewsArticle[]> {
-    const apiKey = process.env.NEWS_API;
-    const url = `https://newsapi.org/v2/everything?q=${category}&apiKey=${apiKey}`;
+    const apiKey = process.env.NEXT_PUBLIC_NEWS_API;
+    const url = `https://newsapi.org/v2/everything?q=${category}&pageSize=5&apiKey=${apiKey}`;
     console.log(url);
     
     try {

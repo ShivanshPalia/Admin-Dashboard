@@ -1,8 +1,16 @@
 
-// components/BarChartComponent.tsx
 
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 type DataItem = {
   name: string;
@@ -23,17 +31,53 @@ const data: DataItem[] = [
 
 const BarChartComponent: React.FC = () => {
   return (
-    <div className="w-[40%] bg-[#3b3b3b] p  rounded-lg shadow-md">
-       <h2 className="text-lg font-bold mb-4">Revenue Distribution</h2>
+    <div className="w-[90%] lg:w-[60%] bg-gradient-to-br from-[#232323] to-[#3b3b3b] p-8 rounded-lg shadow-xl transition-all hover:scale-[1.02] duration-300 ease-in-out mx-auto">
+      <h2 className="text-2xl font-bold text-white mb-6 text-center">
+        Revenue Distribution
+      </h2>
       <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="pv" fill="#8884d8" />
-          <Bar dataKey="uv" fill="#82ca9d" />
+        <BarChart
+          data={data}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid
+            strokeDasharray="3 3"
+            strokeOpacity={0.2}
+          />
+          <XAxis
+            dataKey="name"
+            tick={{ fill: "#fff" }}
+          />
+          <YAxis tick={{ fill: "#fff" }} />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "#1f1f1f",
+              border: "none",
+              borderRadius: "8px",
+              color: "#fff",
+            }}
+            cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
+          />
+          <Legend
+            wrapperStyle={{ color: "#fff" }}
+            iconSize={20}
+            align="center"
+            verticalAlign="top"
+          />
+          <Bar
+            dataKey="pv"
+            fill="#8884d8"
+            radius={[10, 10, 0, 0]}
+            animationDuration={1500}
+            animationBegin={500}
+          />
+          <Bar
+            dataKey="uv"
+            fill="#82ca9d"
+            radius={[10, 10, 0, 0]}
+            animationDuration={2000}
+            animationBegin={800}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

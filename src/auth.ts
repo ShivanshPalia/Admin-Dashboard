@@ -1,87 +1,77 @@
-// import NextAuth, { CredentialsSignin } from "next-auth"
-// import google from 'next-auth/providers/google'
-// import twitter from 'next-auth/providers/twitter'
-// import credentials from 'next-auth/providers/credentials'
-// import Github from 'next-auth/providers/github'
-// import {compare} from 'bcryptjs'
+// import NextAuth from "next-auth"
+// import Github from "next-auth/providers/github"
 // import { db } from "./db"
-// import { PrismaAdapter } from "@auth/prisma-adapter"
-// export const { handlers:{GET,POST}, signIn, signOut, auth } = NextAuth({
-//     adapter:PrismaAdapter(db),
+// import bcrypt from "bcryptjs"
+// import credentials from "next-auth/providers/credentials"
+// import {PrismaAdapter} from "@auth/prisma-adapter"
+
+// if (!process.env.AUTH_GITHUB_ID || !process.env.AUTH_GITHUB_SECRET) {
+//   throw new Error("Missing GitHub OAuth environment variables. Ensure AUTH_GITHUB_ID and AUTH_GITHUB_SECRET are defined.")
+// }else{
+//   console.log(process.env.AUTH_GITHUB_SECRET , process.env.AUTH_GITHUB_ID);
+  
+// }
+
+// export const { handlers :{GET,POST}, signIn, signOut, auth } = NextAuth({
+//   adapter :PrismaAdapter(db) ,
+//   session : {strategy:"jwt"},
 //   providers: [
-// Github({
-//     clientId:process.env.AUTH_GITHUB_ID as string,
-//     clientSecret:process.env.AUTH_GITHUB_SECRET as string
-// }),
-// google({
-//     clientId:process.env.AUTH_GOOGLE_ID,
-//     clientSecret:process.env.AUTH_GOOGLE_SECRET,
-//     authorization:{
-//         params:{
-//             prompt:"consent",
-//             access_type:"offline",
-//             response_type:"code"
-//         }
-//     }
-// })],
-// secret: process.env.NEXTAUTH_SECRET,
-// debug: true, 
+//     Github({
+//         clientId:process.env.AUTH_GITHUB_ID,
+//         clientSecret:process.env.AUTH_GITHUB_SECRET
+//     }),
+   
+//   ],
+  
+
+//   debug: true,
 // })
 
 
-import NextAuth from "next-auth";
-import GoogleProvider from 'next-auth/providers/google';
-import TwitterProvider from 'next-auth/providers/twitter';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import GitHubProvider from 'next-auth/providers/github';
-import { compare } from 'bcryptjs';
-import { db } from "./db";
-import { PrismaAdapter } from "@auth/prisma-adapter";
+// auth.ts
+// import NextAuth from "next-auth";
+// import Github from "next-auth/providers/github";
+// import { db } from "./db";
+// import bcrypt from "bcryptjs";
+// import CredentialsProvider from "next-auth/providers/credentials";
+// import { PrismaAdapter } from "@auth/prisma-adapter";
+// import { log } from "console";
 
-export const { handlers: { GET, POST }, signIn, signOut, auth } = NextAuth({
-  adapter: PrismaAdapter(db),
-  providers: [
-    GitHubProvider({
-      clientId: process.env.AUTH_GITHUB_ID as string,
-      clientSecret: process.env.AUTH_GITHUB_SECRET as string,
-    }),
-    GoogleProvider({
-      clientId: process.env.AUTH_GOOGLE_ID as string,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET as string,
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
-    }),
-  ],
-  secret: process.env.NEXTAUTH_SECRET,
-  debug: true,
-  // Add callbacks for additional logging and error handling
-  callbacks: {
-    async signIn({ user, account, profile }) {
-      try {
-        console.log('SignIn Callback:', { user, account, profile });
-        return true;
-      } catch (error) {
-        console.error('Error in signIn callback:', error);
-        return false;
-      }
-    },
-    async redirect({ url, baseUrl }) {
-      console.log('Redirect Callback:', { url, baseUrl });
-      return baseUrl; // Ensures redirect to the base URL
-    },
-    async session({ session, token, user }) {
-      console.log('Session Callback:', { session, token, user });
-      return session;
-    },
-    async jwt({ token, user, account, profile, isNewUser }) {
-      console.log('JWT Callback:', { token, user, account, profile, isNewUser });
-      return token;
-    },
-  }, 
-});
+// // Ensure GitHub OAuth credentials are available
+// if (!process.env.AUTH_GITHUB_ID || !process.env.AUTH_GITHUB_SECRET) {
+//   throw new Error("Missing GitHub OAuth environment variables.");
+// } else {
+//   console.log("GitHub Credentials:", process.env.AUTH_GITHUB_ID, process.env.AUTH_GITHUB_SECRET);
+// }
 
+// // Function to log errors in PrismaAdapter
+// function prismaAdapterWithErrorLogging() {
+//   try {
+//     console.log("Initializing PrismaAdapter...");
+//     const adapter = PrismaAdapter(db);
+//     console.log("PrismaAdapter initialized successfully.");
+//     return adapter;
+//   } catch (error) {
+//     console.error("Error with PrismaAdapter:", error);
+//     throw new Error("PrismaAdapter configuration failed.");
+//   }
+// }
+
+// // NextAuth Configuration
+// export const { handlers: { GET, POST }, signIn, signOut, auth } = NextAuth({
+//   adapter: prismaAdapterWithErrorLogging(), // Wrapping the PrismaAdapter with error handling
+//   session: { strategy: "jwt" }, // Using JWT-based sessions
+//   providers: [
+//     // GitHub provider
+//     Github({
+//       clientId: process.env.AUTH_GITHUB_ID!,
+//       clientSecret: process.env.AUTH_GITHUB_SECRET!,
+//     }),
+    
+//   ],
+//   secret: process.env.AUTH_SECRET,
+//   debug: true, // Enable debug mode for more detailed logs
+// });
+
+// // Enable more verbose logging in the environment
+// // In your .env file, add: NEXTAUTH_DEBUG=true

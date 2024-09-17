@@ -5,8 +5,7 @@ import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
 import PublicIcon from '@mui/icons-material/Public';
 import { useSelectedLink } from '../selectedlinkprovider';
 import LoginIcon from '@mui/icons-material/Login';
-
-import Login from '../Login/page';
+import { login } from '../actions/auth';
 import Link from 'next/link';
 const navbar = () => {
   const {selectedLink}= useSelectedLink();
@@ -21,10 +20,9 @@ const navbar = () => {
         <Input placeholder='search...' className='bg-transparent border-none focus-0 focus:outline-none focus:ring-0 !important'/>
         </div>
       <SpeakerNotesIcon/>
-        <Link  href="/Login">
+        <Link  href="http://localhost:3000/api/auth/signin" onClick={()=>{login("github")}}>
         <LoginIcon/>
         </Link>
-      
       <PublicIcon/>
       </div>
       </div>

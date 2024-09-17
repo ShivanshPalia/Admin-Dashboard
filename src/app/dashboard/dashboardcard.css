@@ -1,0 +1,49 @@
+/* Perspective for 3D effect */
+.perspective {
+  perspective: 1000px;
+}
+
+/* Hover effect to rotate the card */
+.group:hover .group-hover\:rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Ensure the relative positioning of the card faces */
+.relative {
+  position: relative;
+}
+
+/* Width and height for the card */
+.w-64 {
+  width: 16rem;
+}
+
+.h-64 {
+  height: 16rem;
+}
+
+/* Hide the back face when not rotated */
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Preserve 3D transformation */
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+/* Smooth transition for rotation */
+.transition-transform {
+  transition: transform 0.8s;
+}
+
+/* Make sure the face of the card is centered and the backface visibility is hidden */
+.absolute {
+  position: absolute;
+  backface-visibility: hidden;
+}
+
+/* Make sure backface is hidden correctly */
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
